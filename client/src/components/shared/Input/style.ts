@@ -20,6 +20,8 @@ export const InputStyles = styled.input<Props> `
     font-family: "Poppins";
     margin: 3px;
 
+    padding-left: 10px;
+
     ::focus {
         outline: none;
         border: ${props => props.focusBorderColor};

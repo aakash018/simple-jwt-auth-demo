@@ -1,17 +1,18 @@
-import { Button } from "./style";
+import { Button, BtnStyleType } from "./style";
 
 type BtnType = "submit" | "reset" | "button"
 
 interface Props {
     onClick?: () => void,
     type: BtnType,
-    width?: string
+    width?: string,
+    styleType: BtnStyleType,
 }
 
-const Btn:React.FC<Props> = ({children, onClick, type, width}) => {
+const Btn:React.FC<Props> = ({children, onClick, type, width, styleType}) => {
     return (
         <>
-            <Button onClick={onClick} type={type} width={width? width : null}>{children}</Button>
+            <Button onClick={onClick} type={type} width={width? width : null} styleType={styleType}>{children}</Button>
         </>
     )
 }
