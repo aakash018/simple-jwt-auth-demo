@@ -1,8 +1,10 @@
-import { useState } from "react"
+import Input from "../shared/Input"
 import Btn from "../shared/Btn"
+import axios from "axios"
+
+import { useState } from "react"
 import { Container } from "../shared/MainForm/contianer.style"
 import { Form } from "../shared/MainForm/form.style"
-import Input from "../shared/Input"
 import { Wraper } from "../shared/MainForm/wraper.style"
 import { AdditionalText } from "../shared/MainForm/AdditionalText.style"
 import { Link } from "react-router-dom"
@@ -14,10 +16,18 @@ const SignUp:React.FC = () => {
     const [confirmPass, setConfirmPass] = useState("")
     const [email, setEmail] = useState("")
 
+    const handleSubmit = async (e:React.FormEvent) => {
+        e.preventDefault()
+
+        axios
+            .post("api/signup", {username, password, email})
+    }
+
+
     return (
         <Wraper>
             <Container>
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Input type="text" onChange={setUsername} placeholder="Username" />
                     <Input type="password" onChange={setPassword} placeholder="Password" />
                     <Input type="password" onChange={setConfirmPass} placeholder="Confirm Password" />
