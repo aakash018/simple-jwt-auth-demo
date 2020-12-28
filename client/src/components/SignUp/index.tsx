@@ -19,6 +19,8 @@ const SignUp:React.FC = () => {
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault()
 
+        // TODO: Add Input Filter
+
         axios
             .post("api/signup", {username, password, email})
     }

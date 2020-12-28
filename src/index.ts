@@ -2,12 +2,13 @@
 import "dotenv/config"
 import express from "express"
 import signUp from "./api/signup"
-import {Pool} from "pg"
+import { pool } from "./psql_pool";
+
 
 const app = express()
 const PORT: number = 5000;
 
-//Startinf Page
+//Starting Page
     app.get("/", (_,res) => {
         res.json({status: "running", message: "Server is Running"})
     })
@@ -15,12 +16,12 @@ const PORT: number = 5000;
 
 //PGSQL INIT
     const sqlDB =async() => {
-        const pool = new Pool({
-            connectionString: process.env.PSQL_URI,
-        })
-
+        try {
         await pool.connect()
-        console.log("Connected")
+        console.log("Connected to DB")
+        } catch(e) {
+            console.error(e)
+        }
     }
     sqlDB()
 
