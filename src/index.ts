@@ -1,13 +1,16 @@
-
+import "reflect-metadata"
 import "dotenv/config"
 import express from "express"
 import signUp from "./api/signup"
-// import { pool } from "./psql_pool";
+// import { MikroORM } from "@mikro-orm/core"
+// import {Post} from "./entities/Post"
+// import { User } from "./entities/Users"
+// import microORM_config from "./mikro-orm.config"
+// import {typeorm} from "./orm"
+import {createConnection} from "typeorm"
 
-import { MikroORM, QueryOrder } from "@mikro-orm/core"
-import {Post} from "./entities/Post"
-import microORM_config from "./mikro-orm.config"
-
+import { User } from "./entities/Users"
+import { Post } from "./entities/Post"
 
 const app = express()
 const PORT: number = 5000;
@@ -19,21 +22,49 @@ const PORT: number = 5000;
 
 
 //PGSQL INIT
-    const orm_INIT = async () => {  
-        const orm = await MikroORM.init(microORM_config)
-        await orm.getMigrator().up();
-        // const post = orm.em.create(Post, {title: 'YoHE'});
-        // await orm.em.persistAndFlush(post)
+    // const orm_INIT = async () => {  
+    //     const orm = await orm_init;
+    //     await orm.getMigrator().up();
+    //     const post = orm.em.create(User, {username: 'YE', password: "aa", email: "Hlo"});
+    //     await orm.em.persistAndFlush(post)
 
-        const PostRepo = orm.em.getRepository(Post)
+    //     // const PostRepo = orm.em.getRepository(Post)
 
-        const postoutput  = await PostRepo.find({title: /%/}, {
-           limit: 10,
-           orderBy: {title: 'DESC'}
-        })
-        console.table(postoutput)
+    //     // const postoutput  = await PostRepo.find({title: /%/}, {
+    //     //    limit: 10,
+    //     //    orderBy: {title: 'DESC'}
+    //     // })
+    //     console.table(post)
+    // }
+    
+    const typeORM = async () => {
+        try{
+            const typeorm = await createConnection({
+                type: 'postgres',
+                url: process.env.PSQL_URI,
+                entities: [Post, User],
+                synchronize: true,
+            })
+        console.log("Connected to DB");
+        // const result = await typeorm.createQueryBuilder()
+        //                 .insert()
+        //                 .into(User)
+        //                 .values({
+        //                     username: "EFodfde",
+        //                     password: "aaa",
+        //                     email: "email@EMAIL"
+        //                 })
+        //                 .execute();
+        const result = await typeorm.createQueryBuilder()
+                                    .select("*")
+                                    .from(User, "*")
+                                    .getMany()
+        console.log(result)
+        } catch(e) {
+            console.error(e)
+        }
     }
-    orm_INIT();
+    typeORM()
 
 //Parser MiddleWare
 app.use(express.json())

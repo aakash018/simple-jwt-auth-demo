@@ -23,7 +23,7 @@ const SignUp:React.FC = () => {
 
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault()
-
+        console.log("Ran")
         // TODO: Add Input Filter
             if(username === "" || password === "" || confirmPass === "" || email === ""){
                 return setError({
@@ -34,7 +34,6 @@ const SignUp:React.FC = () => {
         axios
             .post("api/signup", {username, password, email})
     }
-
 
     return (
         <Wraper>

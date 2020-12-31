@@ -13,15 +13,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const psql_pool_1 = require("../psql_pool");
+const typeorm_1 = require("typeorm");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const Users_1 = require("../entities/Users");
 const router = express_1.default();
 router.post("/", (req) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email } = req.body;
     const hasedPass = yield bcrypt_1.default.hash(password, 12);
-    yield psql_pool_1.pool.query("INSERT INTO users (username, info, email) VALUES ($1, $2, $3)", [username, hasedPass, email]);
-    const data = yield psql_pool_1.pool.query("SELECT * FROM users");
-    console.table(data.rows);
+    console.log(username);
+    const result = yield typeorm_1.getConnection()
+        .createQueryBuilder()
+        .insert()
+        .into(Users_1.User)
+        .values({
+        username: username,
+        password: hasedPass,
+        email: email,
+    })
+        .execute();
+    console.log(result.raw);
 }));
 exports.default = router;
 //# sourceMappingURL=signup.js.map
