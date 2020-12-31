@@ -16,11 +16,21 @@ const SignUp:React.FC = () => {
     const [confirmPass, setConfirmPass] = useState("")
     const [email, setEmail] = useState("")
 
+    const [error, setError] = useState({
+        display: false,
+        errorMessage: ""
+    })
+
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault()
 
         // TODO: Add Input Filter
-
+            if(username === "" || password === "" || confirmPass === "" || email === ""){
+                return setError({
+                    display: true,
+                    errorMessage: "Empty Fields"
+                })
+            }
         axios
             .post("api/signup", {username, password, email})
     }

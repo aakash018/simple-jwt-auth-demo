@@ -2,7 +2,11 @@
 import "dotenv/config"
 import express from "express"
 import signUp from "./api/signup"
-import { pool } from "./psql_pool";
+// import { pool } from "./psql_pool";
+
+import { MikroORM, QueryOrder } from "@mikro-orm/core"
+import {Post} from "./entities/Post"
+import microORM_config from "./mikro-orm.config"
 
 
 const app = express()
@@ -15,15 +19,21 @@ const PORT: number = 5000;
 
 
 //PGSQL INIT
-    const sqlDB =async() => {
-        try {
-        await pool.connect()
-        console.log("Connected to DB")
-        } catch(e) {
-            console.error(e)
-        }
+    const orm_INIT = async () => {  
+        const orm = await MikroORM.init(microORM_config)
+        await orm.getMigrator().up();
+        // const post = orm.em.create(Post, {title: 'YoHE'});
+        // await orm.em.persistAndFlush(post)
+
+        const PostRepo = orm.em.getRepository(Post)
+
+        const postoutput  = await PostRepo.find({title: /%/}, {
+           limit: 10,
+           orderBy: {title: 'DESC'}
+        })
+        console.table(postoutput)
     }
-    sqlDB()
+    orm_INIT();
 
 //Parser MiddleWare
 app.use(express.json())
