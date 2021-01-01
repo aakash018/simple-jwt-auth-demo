@@ -1,15 +1,15 @@
 // import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn} from "typeorm"
+import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryColumn} from "typeorm"
 
 @Entity()
 export class User {
 
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryColumn()
+  id!: string;
 
   @Column({unique: true})
   username!: string;
-
+  
   @Column()
   password!: string;
 

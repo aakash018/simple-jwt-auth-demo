@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useAuth } from "../../context/Auth"
 import Btn from "../shared/Btn"
 import Input from "../shared/Input"
 import { AdditionalText } from "../shared/MainForm/AdditionalText.style"
@@ -9,12 +10,16 @@ import { Wraper } from "../shared/MainForm/wraper.style"
 
 
 const Login = () => {
+    const {login} = useAuth()
+
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
     const handleSubmit = (e:React.FormEvent) => {
         e.preventDefault()
-        console.log(username, password)
+        if(login){
+            login()
+        }
     }
 
     return (

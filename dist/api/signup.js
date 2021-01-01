@@ -16,22 +16,35 @@ const express_1 = __importDefault(require("express"));
 const typeorm_1 = require("typeorm");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const Users_1 = require("../entities/Users");
+const uuid_1 = require("uuid");
 const router = express_1.default();
-router.post("/", (req) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password, email } = req.body;
     const hasedPass = yield bcrypt_1.default.hash(password, 12);
     console.log(username);
-    const result = yield typeorm_1.getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(Users_1.User)
-        .values({
-        username: username,
-        password: hasedPass,
-        email: email,
-    })
-        .execute();
-    console.log(result.raw);
+    try {
+        const result = yield typeorm_1.getConnection()
+            .createQueryBuilder()
+            .insert()
+            .into(Users_1.User)
+            .values({
+            id: uuid_1.v4(),
+            username: username,
+            password: hasedPass,
+            email: email,
+        })
+            .execute();
+        console.log(result.raw);
+    }
+    catch (e) {
+        console.error(e);
+        if (e.code === '23505') {
+            res.json({
+                status: "error",
+                message: "User already Exists..."
+            });
+        }
+    }
 }));
 exports.default = router;
 //# sourceMappingURL=signup.js.map

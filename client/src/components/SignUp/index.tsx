@@ -33,6 +33,9 @@ const SignUp:React.FC = () => {
             }
         axios
             .post("api/signup", {username, password, email})
+            .then(res => {
+                console.log(res.data)
+            })
     }
 
     return (

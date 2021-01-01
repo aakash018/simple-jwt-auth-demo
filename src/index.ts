@@ -22,21 +22,6 @@ const PORT: number = 5000;
 
 
 //PGSQL INIT
-    // const orm_INIT = async () => {  
-    //     const orm = await orm_init;
-    //     await orm.getMigrator().up();
-    //     const post = orm.em.create(User, {username: 'YE', password: "aa", email: "Hlo"});
-    //     await orm.em.persistAndFlush(post)
-
-    //     // const PostRepo = orm.em.getRepository(Post)
-
-    //     // const postoutput  = await PostRepo.find({title: /%/}, {
-    //     //    limit: 10,
-    //     //    orderBy: {title: 'DESC'}
-    //     // })
-    //     console.table(post)
-    // }
-    
     const typeORM = async () => {
         try{
             const typeorm = await createConnection({
@@ -46,15 +31,6 @@ const PORT: number = 5000;
                 synchronize: true,
             })
         console.log("Connected to DB");
-        // const result = await typeorm.createQueryBuilder()
-        //                 .insert()
-        //                 .into(User)
-        //                 .values({
-        //                     username: "EFodfde",
-        //                     password: "aaa",
-        //                     email: "email@EMAIL"
-        //                 })
-        //                 .execute();
         const result = await typeorm.createQueryBuilder()
                                     .select("*")
                                     .from(User, "*")
