@@ -1,8 +1,8 @@
 // import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryColumn} from "typeorm"
+import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity} from "typeorm"
 
 @Entity()
-export class User {
+export class User extends BaseEntity {
 
   @PrimaryColumn()
   id!: string;

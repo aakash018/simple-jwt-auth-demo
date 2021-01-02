@@ -2,15 +2,14 @@ import "reflect-metadata"
 import "dotenv/config"
 import express from "express"
 import signUp from "./api/signup"
-// import { MikroORM } from "@mikro-orm/core"
-// import {Post} from "./entities/Post"
-// import { User } from "./entities/Users"
-// import microORM_config from "./mikro-orm.config"
-// import {typeorm} from "./orm"
-import {createConnection} from "typeorm"
+import login from "./api/login"
+import sessions from "express-session"
+import {createConnection } from "typeorm"
 
 import { User } from "./entities/Users"
 import { Post } from "./entities/Post"
+import passport from "passport"
+
 
 const app = express()
 const PORT: number = 5000;
@@ -20,21 +19,27 @@ const PORT: number = 5000;
         res.json({status: "running", message: "Server is Running"})
     })
 
+// Passport Init 
+    app.use(sessions({
+        secret: "caT",
+        resave: false,
+        saveUninitialized: false,
+    }))
+    app.use(passport.initialize());
+    app.use(passport.session());
+
 
 //PGSQL INIT
     const typeORM = async () => {
         try{
-            const typeorm = await createConnection({
+            await createConnection({
                 type: 'postgres',
                 url: process.env.PSQL_URI,
                 entities: [Post, User],
                 synchronize: true,
             })
         console.log("Connected to DB");
-        const result = await typeorm.createQueryBuilder()
-                                    .select("*")
-                                    .from(User, "*")
-                                    .getMany()
+        const result = await User.findOne({username: 'Joe'})
         console.log(result)
         } catch(e) {
             console.error(e)
@@ -46,8 +51,10 @@ const PORT: number = 5000;
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 
-//Routers
+
+
 app.use("/api/signup", signUp)
+app.use("/api/login", login)
 
 
 //Server INI

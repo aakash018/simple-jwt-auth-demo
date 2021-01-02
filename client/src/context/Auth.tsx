@@ -4,20 +4,10 @@ interface AuthType {
     login?: () => void;
 }
 
-interface test {
-    hi: string
-}
-
 const AuthContext = createContext<AuthType>({})
 
 export const useAuth = ():AuthType => {
     return useContext(AuthContext)
-}
-
-export const test = (): test => {
-    return {
-        hi: "Yooo"
-    }
 }
 
 const AuthProvider:React.FC = ({children}) => {

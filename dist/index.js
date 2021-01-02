@@ -16,27 +16,34 @@ require("reflect-metadata");
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const signup_1 = __importDefault(require("./api/signup"));
+const login_1 = __importDefault(require("./api/login"));
+const express_session_1 = __importDefault(require("express-session"));
 const typeorm_1 = require("typeorm");
 const Users_1 = require("./entities/Users");
 const Post_1 = require("./entities/Post");
+const passport_1 = __importDefault(require("passport"));
 const app = express_1.default();
 const PORT = 5000;
 app.get("/", (_, res) => {
     res.json({ status: "running", message: "Server is Running" });
 });
+app.use(express_session_1.default({
+    secret: "caT",
+    resave: false,
+    saveUninitialized: false,
+}));
+app.use(passport_1.default.initialize());
+app.use(passport_1.default.session());
 const typeORM = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const typeorm = yield typeorm_1.createConnection({
+        yield typeorm_1.createConnection({
             type: 'postgres',
             url: process.env.PSQL_URI,
             entities: [Post_1.Post, Users_1.User],
             synchronize: true,
         });
         console.log("Connected to DB");
-        const result = yield typeorm.createQueryBuilder()
-            .select("*")
-            .from(Users_1.User, "*")
-            .getMany();
+        const result = yield Users_1.User.findOne({ username: 'Joe' });
         console.log(result);
     }
     catch (e) {
@@ -47,6 +54,7 @@ typeORM();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use("/api/signup", signup_1.default);
+app.use("/api/login", login_1.default);
 app.listen(PORT, () => {
     console.log(`Server Running at ${PORT}`);
 });
