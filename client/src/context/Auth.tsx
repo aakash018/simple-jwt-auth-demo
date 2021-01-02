@@ -10,7 +10,7 @@ interface UserTypes {
 
 interface AuthType {
     login?: (username: string, password: string) => void,
-    currentUser?: UserTypes | undefined
+    currentUser?: UserTypes | undefined,
 }
 
 
@@ -32,6 +32,13 @@ const AuthProvider:React.FC = ({children}) => {
             let response;
             (async () => {
             response = await axios.post("/api/login", {username, password});
+            
+            // TODO SAVE TOKEN LOCALSTORAGE
+            // * SEND FROM BACKEND FIRST
+            // * THEN SEND IN HEADER 
+            // * PARSE HEADER AND USE... 
+            // ! await axios.post("/api/login/jwt", {username, password})
+
             setCurrentUser({
                 username: response.data.username,
                 email: response.data.email,
