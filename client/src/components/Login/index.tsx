@@ -1,7 +1,8 @@
-import { useEffect } from "react"
+
 import { useState } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { useAuth } from "../../context/Auth"
+import { getToken } from "../../variables"
 import Btn from "../shared/Btn"
 import Input from "../shared/Input"
 import { AdditionalText } from "../shared/MainForm/AdditionalText.style"
@@ -11,7 +12,7 @@ import { Wraper } from "../shared/MainForm/wraper.style"
 
 
 const Login = () => {
-    const {login, currentUser} = useAuth()
+    const {login, setCurrentUser} = useAuth()
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
@@ -24,16 +25,21 @@ const Login = () => {
         }
 
         if(login){
-            login(username, password);
+            const userdata = await login(username, password);
+            console.log(userdata)
+            if(setCurrentUser){
+                setCurrentUser({
+                    username: userdata.data.username,
+                    password: userdata.data.password,
+                    id: userdata.data.id,
+                    email: userdata.data.email
+                })
+            }
+            if(userdata){
+                history.push("/")
+            }
         }
     }
-
-    useEffect(() => {
-        if(currentUser !== undefined){
-            history.push("/")
-        }
-    }, [currentUser, history])
-
     return (
         <>
             <Wraper>

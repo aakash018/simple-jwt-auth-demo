@@ -1,6 +1,6 @@
 /// <reference path="../variables.ts" />
 
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import {createContext, useContext, useState} from 'react'
 import { getToken, setToken } from '../variables'
 
@@ -12,8 +12,9 @@ interface UserTypes {
 }
 
 interface AuthType {
-    login?: (username: string, password: string) => void,
+    login?: (username: string, password: string) => Promise<AxiosResponse<UserTypes>>
     currentUser?: UserTypes | undefined,
+    setCurrentUser?: React.Dispatch<React.SetStateAction<UserTypes | undefined>>
 }
 
 
@@ -28,47 +29,23 @@ const AuthProvider:React.FC = ({children}) => {
 
     const [currentUser, setCurrentUser] = useState<UserTypes>()
 
-
-
-    const login = (username: string, password: string) => {
-        try {
-            (async () => {
-            // response = await axios.post("/api/login", {username, password});
-            
-            // TODO SAVE TOKEN LOCALSTORAGE
-            // * SEND FROM BACKEND FIRST
-            // * THEN SEND IN HEADER 
-            // * PARSE HEADER AND USE... 
-            // ! await axios.post("/api/login/jwt", {username, password})
-                
+    const login = async (username: string, password: string) => {                         
             const {data: jwt_response} = await axios.post<{token: string}>("/api/login/jwt", {username, password})
-            console.log(getToken())
+            console.log(jwt_response) 
             setToken(jwt_response.token)
-
-            const {data: userData} = await axios.get<UserTypes>("/api/login/data", {
+            return axios.get<UserTypes>("/api/login/data", {
                 headers: {
                     'Authorization': `Basic ${getToken()}`
                 } , 
                 params: {
                     username: username
                 }
-            })
-
-            setCurrentUser({
-                username: userData.username,
-                email: userData.email,
-                password: userData.password,
-                id: userData.id,
-            })
-            })()
-        } catch(e) {
-            console.error(e)
-        }
+            })    
     }
-
     const values: AuthType = {
         login,
-        currentUser
+        currentUser,
+        setCurrentUser
     }
 
     return (
