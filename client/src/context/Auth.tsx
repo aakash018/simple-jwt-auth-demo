@@ -6,7 +6,7 @@ import { getToken, setToken } from '../variables'
 
 interface UserTypes {
     username: string,
-    password: string,
+    password?: string,
     id: string,
     email: string
 }

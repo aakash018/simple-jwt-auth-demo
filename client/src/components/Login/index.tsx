@@ -1,8 +1,9 @@
 
-import { useState } from "react"
+import axios from "axios"
+import { useEffect, useState } from "react"
 import { Link, useHistory } from "react-router-dom"
 import { useAuth } from "../../context/Auth"
-import { getToken } from "../../variables"
+import { setToken } from "../../variables"
 import Btn from "../shared/Btn"
 import Input from "../shared/Input"
 import { AdditionalText } from "../shared/MainForm/AdditionalText.style"
@@ -11,15 +12,43 @@ import { Form } from "../shared/MainForm/form.style"
 import { Wraper } from "../shared/MainForm/wraper.style"
 
 
-const Login = () => {
-    const {login, setCurrentUser} = useAuth()
+interface Refresh_token {
+    token: string,
+    username: string,
+    id: string,
+    email: string
+}
 
+const Login:React.FC = () => {
+    const {login, setCurrentUser} = useAuth()
+    
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const history = useHistory();
+
+    useEffect(() => {
+        (
+            async () => {
+                const {data: jwt_token} = await axios.get<Refresh_token>("/api/login/refresh-token")
+                if(jwt_token.token) {
+                    const {username, email, id, token} = jwt_token
+                    setToken(token)
+                    if(setCurrentUser){
+                        setCurrentUser({
+                            username: username,
+                            id: id,
+                            email: email
+                        })
+                    }
+                    history.push("/")
+                }
+            }
+        )()
+    }, [])
+
+
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault()
-
         if(username === "" || password === ""){
             return console.log("Error")
         }
