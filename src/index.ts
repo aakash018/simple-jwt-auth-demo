@@ -39,8 +39,6 @@ const PORT: number = 5000;
                 synchronize: true,
             })
         console.log("Connected to DB");
-        const result = await User.findOne({username: 'Mike'})
-        console.log(result)
         } catch(e) {
             console.error(e)
         }

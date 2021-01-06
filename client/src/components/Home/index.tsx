@@ -5,7 +5,7 @@ const Home = () => {
     const { currentUser } = useAuth()
     
     const handleClick = async () => {
-        console.log("Hi")
+        console.log(currentUser)
     }
 
     return (

@@ -43,8 +43,6 @@ const typeORM = () => __awaiter(void 0, void 0, void 0, function* () {
             synchronize: true,
         });
         console.log("Connected to DB");
-        const result = yield Users_1.User.findOne({ username: 'Joe' });
-        console.log(result);
     }
     catch (e) {
         console.error(e);

@@ -18,6 +18,11 @@ const Login = () => {
     const history = useHistory();
     const handleSubmit = async (e:React.FormEvent) => {
         e.preventDefault()
+
+        if(username === "" || password === ""){
+            return console.log("Error")
+        }
+
         if(login){
             login(username, password);
         }

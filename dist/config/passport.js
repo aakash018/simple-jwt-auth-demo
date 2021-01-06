@@ -19,18 +19,14 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const LocalStrategy = passport_local_1.default.Strategy;
 const initializePassport = (getUserByUsername, getUserById) => {
     const auth = (username, password, done) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(username, password);
         const user = yield getUserByUsername(username);
-        console.log(user);
         if (user == null) {
             console.log("Null");
             return done(null, false, { message: "No User" });
         }
         if (!(yield bcrypt_1.default.compare(password, user.password))) {
-            console.log("hi");
             return done(null, false, { message: "Wrong Password" });
         }
-        console.log("Done");
         done(null, user);
     });
     passport_1.default.use(new LocalStrategy((auth)));

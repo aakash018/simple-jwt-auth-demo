@@ -1,5 +1,6 @@
 import {Route, Redirect} from "react-router-dom"
 import { useAuth } from "../../context/Auth"
+import { getToken } from "../../variables"
 
 interface Props {
     component: any,
@@ -15,7 +16,7 @@ const PrivateRoute:React.FC<Props> = ({component: Component,  ...rest}) => {
         <Route
         {...rest}
         render={props => (
-            currentUser? <Component {...props}/> : <Redirect to="/login"/>
+            getToken()? <Component {...props}/> : <Redirect to="/login"/>
         )} />
     )
 }
