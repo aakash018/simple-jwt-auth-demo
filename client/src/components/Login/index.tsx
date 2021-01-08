@@ -2,8 +2,9 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link, useHistory } from "react-router-dom"
+import { Refresh_token } from "../../@types/user"
 import { useAuth } from "../../context/Auth"
-import { setToken } from "../../variables"
+import { setExpiringToken, setToken } from "../../variables"
 import Btn from "../shared/Btn"
 import Input from "../shared/Input"
 import { AdditionalText } from "../shared/MainForm/AdditionalText.style"
@@ -11,13 +12,6 @@ import { Container } from "../shared/MainForm/contianer.style"
 import { Form } from "../shared/MainForm/form.style"
 import { Wraper } from "../shared/MainForm/wraper.style"
 
-
-interface Refresh_token {
-    token: string,
-    username: string,
-    id: string,
-    email: string
-}
 
 const Login:React.FC = () => {
     const {login, setCurrentUser} = useAuth()
@@ -33,6 +27,7 @@ const Login:React.FC = () => {
                 if(jwt_token.token) {
                     const {username, email, id, token} = jwt_token
                     setToken(token)
+                    setExpiringToken(jwt_token.expiringTime)
                     if(setCurrentUser){
                         setCurrentUser({
                             username: username,

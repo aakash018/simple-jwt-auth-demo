@@ -2,14 +2,9 @@
 
 import axios, { AxiosResponse } from 'axios'
 import {createContext, useContext, useState} from 'react'
-import { getToken, setToken } from '../variables'
+import { UserTypes } from '../@types/user'
+import { getToken, setExpiringToken, setToken } from '../variables'
 
-interface UserTypes {
-    username: string,
-    password?: string,
-    id: string,
-    email: string
-}
 
 interface AuthType {
     login?: (username: string, password: string) => Promise<AxiosResponse<UserTypes>>
@@ -30,9 +25,9 @@ const AuthProvider:React.FC = ({children}) => {
     const [currentUser, setCurrentUser] = useState<UserTypes>()
 
     const login = async (username: string, password: string) => {                         
-            const {data: jwt_response} = await axios.post<{token: string}>("/api/login/jwt", {username, password})
-            console.log(jwt_response) 
+            const {data: jwt_response} = await axios.post<{token: string, expiringTime: number}>("/api/login/jwt", {username, password})
             setToken(jwt_response.token)
+            setExpiringToken(jwt_response.expiringTime)
             return axios.get<UserTypes>("/api/login/data", {
                 headers: {
                     'Authorization': `Basic ${getToken()}`
