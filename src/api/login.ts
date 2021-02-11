@@ -1,45 +1,38 @@
-import passport from "passport"
 import { UserTypes } from "src/@types/user"
-import { initializePassport } from "../config/passport"
 import { User } from "../entities/Users"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import express from "express"
+import { validate } from "../config/jwt_validation"
 
 
 
 const router = express()
 
-initializePassport(
-    (username) => User.findOne({username: username}) as unknown as UserTypes,
-    (id) => User.findOne(id)
-)
-router.post("/",  passport.authenticate("local") ,(req,res) => {
-    res.send(req.user)
-})
+
 
 // ? JWT EXPIRIRING TOKEN
 const expiringTime: number = 60;
 
 // * * JWT TEST
 
-const validate: express.RequestHandler = (req, res, next) => {
-    const header: string = req.headers.authorization as string
-    if(!header){
-        res.send("Not Auth")
-    } else {
-        const token = header.split(" ")[1]
-        jwt.verify(token, "key", (err, decoded) => {
-            if(err){
-                res.send("Not Auth")
-                return console.log("Validate Err " + err)
-            } else {
-                console.log(decoded)
-                next()
-            }
-        })
-    }
-}
+// const validate: express.RequestHandler = (req, res, next) => {
+//     const header: string = req.headers.authorization as string
+//     if(!header){
+//         res.send("Not Auth")
+//     } else {
+//         const token = header.split(" ")[1]
+//         jwt.verify(token, "key", (err, decoded) => {
+//             if(err){
+//                 res.send("Not Auth")
+//                 return console.log("Validate Err " + err)
+//             } else {
+//                 console.log(decoded)
+//                 next()
+//             }
+//         })
+//     }
+// }
 
 
 router.post("/jwt", async (req, res) => {

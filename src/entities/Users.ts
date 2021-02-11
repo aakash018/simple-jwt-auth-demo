@@ -1,5 +1,6 @@
-// import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity} from "typeorm"
+import {Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryColumn, BaseEntity, OneToMany} from "typeorm"
+import { Post } from "./Post";
+
 
 @Entity()
 export class User extends BaseEntity {
@@ -15,6 +16,9 @@ export class User extends BaseEntity {
 
   @Column()
   email!: string;
+
+  @OneToMany(() => Post, post => post.creator)
+  post: Post[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -10,31 +10,40 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Post = void 0;
-const core_1 = require("@mikro-orm/core");
-let Post = class Post {
-    constructor() {
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-    }
+const typeorm_1 = require("typeorm");
+const Users_1 = require("./Users");
+let Post = class Post extends typeorm_1.BaseEntity {
 };
 __decorate([
-    core_1.PrimaryKey(),
-    __metadata("design:type", Number)
+    typeorm_1.PrimaryGeneratedColumn(),
+    __metadata("design:type", Object)
 ], Post.prototype, "id", void 0);
 __decorate([
-    core_1.Property({ type: 'date' }),
-    __metadata("design:type", Object)
-], Post.prototype, "createdAt", void 0);
-__decorate([
-    core_1.Property({ type: 'date', onUpdate: () => new Date() }),
-    __metadata("design:type", Object)
-], Post.prototype, "updatedAt", void 0);
-__decorate([
-    core_1.Property({ type: 'text' }),
+    typeorm_1.Column({ type: "text" }),
     __metadata("design:type", String)
 ], Post.prototype, "title", void 0);
+__decorate([
+    typeorm_1.Column({ type: "text" }),
+    __metadata("design:type", String)
+], Post.prototype, "body", void 0);
+__decorate([
+    typeorm_1.Column({ type: "text" }),
+    __metadata("design:type", String)
+], Post.prototype, "creatorId", void 0);
+__decorate([
+    typeorm_1.ManyToOne(() => Users_1.User, user => user.post),
+    __metadata("design:type", Users_1.User)
+], Post.prototype, "creator", void 0);
+__decorate([
+    typeorm_1.CreateDateColumn(),
+    __metadata("design:type", Date)
+], Post.prototype, "createdAt", void 0);
+__decorate([
+    typeorm_1.UpdateDateColumn(),
+    __metadata("design:type", Date)
+], Post.prototype, "updatedAt", void 0);
 Post = __decorate([
-    core_1.Entity()
+    typeorm_1.Entity()
 ], Post);
 exports.Post = Post;
 //# sourceMappingURL=Post.js.map

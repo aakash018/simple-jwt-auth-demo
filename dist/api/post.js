@@ -14,38 +14,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const typeorm_1 = require("typeorm");
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const Users_1 = require("../entities/Users");
-const uuid_1 = require("uuid");
+const Post_1 = require("../entities/Post");
 const router = express_1.default();
+router.get("/", (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield Post_1.Post.find();
+    res.send(post);
+}));
+router.get("/my_post", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const name = req.query.name;
+    console.log(req.query);
+    const result = yield typeorm_1.getConnection()
+        .getRepository(Post_1.Post)
+        .createQueryBuilder("p")
+        .innerJoinAndSelect("p.creator", "u", 'u.id = p."creatorId"')
+        .select(['u.username', 'p.id', 'p.title', 'p.body', 'u.email'])
+        .where("u.username = :username", { username: name })
+        .getMany();
+    if (result === null) {
+        return res.json({ message: "No Data Found" });
+    }
+    return res.send(result);
+}));
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password, email } = req.body;
-    const hasedPass = yield bcrypt_1.default.hash(password, 12);
-    try {
-        const result = yield typeorm_1.getConnection()
-            .createQueryBuilder()
-            .insert()
-            .into(Users_1.User)
-            .values({
-            id: uuid_1.v4(),
-            username: username,
-            password: hasedPass,
-            email: email,
-        })
-            .execute();
-        res.send(result.raw);
-    }
-    catch (e) {
-        if (e.code === '23505') {
-            res.json({
-                status: "error",
-                message: "User already Exists..."
-            });
-        }
-        else {
-            console.error(e);
-        }
-    }
+    const input = req.body;
+    const result = yield Post_1.Post.create(input).save();
+    res.send(result);
 }));
 exports.default = router;
-//# sourceMappingURL=signup.js.map
+//# sourceMappingURL=post.js.map

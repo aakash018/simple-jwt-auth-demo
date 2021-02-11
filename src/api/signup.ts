@@ -15,7 +15,6 @@ interface USER_INFO {
 router.post("/", async (req, res) => {
     const { username, password, email }: USER_INFO = req.body
     const hasedPass = await bcrypt.hash(password, 12)
-    console.log(username)
     try {
     const result = await getConnection()
                     .createQueryBuilder()
@@ -28,14 +27,15 @@ router.post("/", async (req, res) => {
                             email: email,
                         })
                         .execute();
-    console.log(result.raw)
+    res.send(result.raw)
         } catch(e) {
-            console.error(e)
             if  (e.code === '23505') {
                 res.json({
                     status: "error",
                     message: "User already Exists..."
                 })
+            } else {
+                console.error(e)
             }
         } 
 
