@@ -41,6 +41,7 @@ const SignUp:React.FC = () => {
     return (
         <Wraper>
             <Container>
+                {error.display && <h1>Error</h1>}
                 <Form onSubmit={handleSubmit}>
                     <Input type="text" onChange={setUsername} placeholder="Username" />
                     <Input type="password" onChange={setPassword} placeholder="Password" />

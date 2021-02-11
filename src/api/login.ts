@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import express from "express"
 import { validate } from "../config/jwt_validation"
+import { setCurrentUser } from "../variables"
 
 
 
@@ -12,27 +13,9 @@ const router = express()
 
 
 // ? JWT EXPIRIRING TOKEN
-const expiringTime: number = 60;
+const expiringTime: number = 120;
 
 // * * JWT TEST
-
-// const validate: express.RequestHandler = (req, res, next) => {
-//     const header: string = req.headers.authorization as string
-//     if(!header){
-//         res.send("Not Auth")
-//     } else {
-//         const token = header.split(" ")[1]
-//         jwt.verify(token, "key", (err, decoded) => {
-//             if(err){
-//                 res.send("Not Auth")
-//                 return console.log("Validate Err " + err)
-//             } else {
-//                 console.log(decoded)
-//                 next()
-//             }
-//         })
-//     }
-// }
 
 
 router.post("/jwt", async (req, res) => {
@@ -46,13 +29,14 @@ router.post("/jwt", async (req, res) => {
             id: response.id
         }
 
-        if(await bcrypt.compare(password, user.password)){
+        if(await bcrypt.compare(password, user.password as string)){
             const token =jwt.sign({uid: user.id}, 'key', { expiresIn: expiringTime })
             // ? TO SEND REFRESH COOKIE
             res.cookie('refresh-token', (jwt.sign({username: user.username}, 'refKey')), {
                 httpOnly: true,
                 maxAge: 100 * 60 * 60 * 12 * 24 * 10 // 10 days
             })
+            setCurrentUser(user)
             // ? TO SEND ACTUAL TOKEN
             res.json({token: token, expiringTime: expiringTime})
         } else {
@@ -80,6 +64,11 @@ router.get("/refresh-token", (req, res) => {
 
             if(response){
                 const new_token = jwt.sign({uid: response.id}, 'key', { expiresIn: expiringTime })
+                setCurrentUser({
+                    username: response.username,
+                    email: response.email,
+                    id: response.id
+                })
                 res.json({
                     token: new_token,
                     expiringTime: expiringTime, 
@@ -88,6 +77,7 @@ router.get("/refresh-token", (req, res) => {
                     id: response.id
                 })
             }
+
         })
     } else {
         res.status(403).json({message: "Not Auth"})

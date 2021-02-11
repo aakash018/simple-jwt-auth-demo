@@ -9,15 +9,18 @@ const Home = () => {
     const { currentUser } = useAuth()
     
     const handleClick = async () => {
-        const data = await axios.get("/api/login/test-data", {
+        const data = await axios.get("/api/post/my_post",  {
             headers: {
                 'Authorization': `Basic ${getToken()}`
-            }})
+            },
+            params: { name: currentUser?.username }
+            
+        })
         console.log(data.data)
     }
 
     useEffect(() => {
-        const refresh_token_Interval = setInterval(async () => {
+            setInterval(async () => {
             console.log("Go")
             const response = await axios.get<Refresh_token>("/api/login/refresh-token")
             setToken(response.data.token)
@@ -26,7 +29,6 @@ const Home = () => {
 
         }, (getExpiringDate() * 1000 - 2000))
 
-        return () => clearInterval(refresh_token_Interval)
     }, [])
 
     return (

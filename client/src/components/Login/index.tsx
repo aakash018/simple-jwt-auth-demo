@@ -39,7 +39,7 @@ const Login:React.FC = () => {
                 }
             }
         )()
-    }, [])
+    }, [history, setCurrentUser])
 
 
     const handleSubmit = async (e:React.FormEvent) => {
